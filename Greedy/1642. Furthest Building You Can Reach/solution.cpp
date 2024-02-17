@@ -6,6 +6,8 @@ class Solution {
     // 沒了ladders再使用bricks
     // 如果bricks不夠，就從之前使用過ladders選一個最小的出來
     // 因為高度差小使用ladders太浪費了
+    // 為什麼先使用ladders? 因為每個高度差都要用ladders和bricks來比較。
+    // 先使用ladders最後在使用pq中的bricks會讓每個高度差兩種可能比較過。才可以得到最佳解。
 public:
     int furthestBuilding(vector<int>& heights, int bricks, int ladders) {
         int sz = heights.size();
