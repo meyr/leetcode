@@ -9,7 +9,7 @@ public:
         stack<int> st;
         for(int i = 0; i < nums.size() * 2; ++i) {
             while(!st.empty() && nums[i % sz] > nums[st.top() % sz]) {
-                ans[st.top() % sz] = nums[i % sz];
+                ans[st.top() % sz] = nums[i % sz]; // 注意: 題目要的是數值不是index
                 st.pop();
             }
             st.push(i);
