@@ -38,3 +38,36 @@ public:
         return ans;
     }
 };
+
+// 2024.06.29 daily challenge
+// 寫出差不多的答案
+class Solution {
+public:
+    vector<vector<int>> getAncestors(int n, vector<vector<int>>& edges) {
+        unordered_map<int, vector<int>> adj;
+        vector<int> ind(n);
+        vector<set<int>> _ans(n, set<int>());
+        for(auto& e : edges) { //O(E)
+            adj[e[0]].push_back(e[1]);
+            ind[e[1]]++;
+        }
+        queue<int> q;
+        for(int i = 0; i < n; ++i)
+            if(ind[i] == 0) q.push(i);
+        while(!q.empty()) { // O(N)
+            int p = q.front(); q.pop();
+            for(int nxt : adj[p]) {
+                _ans[nxt].insert(p);
+                for(auto& a : _ans[p])
+                    _ans[nxt].insert(a);
+                if(--ind[nxt] == 0) q.push(nxt);
+            }
+        }
+        vector<vector<int>> ans;
+        for(auto& r : _ans) { // O(N)
+            ans.emplace_back(vector<int>(begin(r), end(r)));
+        }
+        return ans;
+    }
+};
+
