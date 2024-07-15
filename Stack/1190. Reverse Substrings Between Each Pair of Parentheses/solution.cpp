@@ -34,3 +34,33 @@ public:
         return ans;
     }
 };
+/*
+ *  參考解答 : https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/solutions/382422/0-ms-stack-solution-c/
+ *
+ *  和上面的類似 其實我們在乎的只是'(' 和 ')' 的位置 所以使用stack來儲存遇到的'('
+ *  遇到')'就把這中間的string反轉
+ *  最後拿掉所有的'('和')'
+ *
+ */
+class Solution {
+public:
+    string reverseParentheses(string s) {
+        stack<int> st;
+        string res;
+        for (int i = 0; i < s.size(); i ++) {
+            if (s[i] == '(') {
+                st.push(i);
+            } else if (s[i] == ')') {
+                int top = st.top();
+                st.pop();
+                reverse(s.begin() + top + 1, s.begin() + i);
+            }
+        }
+        for (auto it: s) {
+            if (it != '(' && it != ')') {
+                res.push_back(it);
+            }
+        }
+        return res;
+    }
+};
