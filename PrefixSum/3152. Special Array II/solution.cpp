@@ -30,3 +30,22 @@ public:
     e, o, o, e
     0, 0, 1, 1
 */
+
+/*  2024/08/14 寫出的解答想法差不多
+ */
+
+class Solution {
+public:
+    vector<bool> isArraySpecial(vector<int>& nums, vector<vector<int>>& queries) {
+        int sz = nums.size();
+        vector<int> ppfs(sz);
+        for(int i = 1; i < nums.size(); ++i) {
+            ppfs[i] += ppfs[i - 1] + ((nums[i] & 1) == (nums[i - 1] & 1));
+        }
+        vector<bool> rtn;
+        for(auto& q : queries) {
+            rtn.push_back(ppfs[q[1]] == ppfs[q[0]]);
+        }
+        return rtn;
+    }
+};
