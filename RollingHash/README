@@ -1,1 +1,3 @@
 先看2156. Find Substring With Given Hash Value 學習什麼是rolling hash?
+
+使用rolling hash計算是否是palindrome : 214. Shortest Palindrome 
