@@ -17,7 +17,7 @@ class Solution {
 public:
     int maxTotalReward(vector<int>& rewardValues) {
         sort(begin(rewardValues), end(rewardValues));
-        mem.resize(rewardValues.size() + 1, vector<int>(2001, -1));
+        mem.resize(rewardValues.size() + 1, vector<int>(2001, -1)); // __important__ 因為必需取目前x還大的reward所以最大只到2000
         return helper(rewardValues, 0, 0);
     }
 };
