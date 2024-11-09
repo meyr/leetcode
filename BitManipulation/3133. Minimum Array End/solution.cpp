@@ -22,3 +22,21 @@ public:
         return ans;
     }
 };
+/*  2024/11/9 daily challenge
+ *  想法和第一個解答一樣但是使用bitset
+ */
+class Solution {
+public:
+    long long minEnd(int n, int x) {
+        const int sz = sizeof(long long) * 8;
+        bitset<sz> bs(x);
+        n--;
+        int i = 0;
+        while(n) {
+            while(i < sz && bs.test(i)) i++;
+            bs.set(i++, n & 1);
+            n >>= 1;
+        }
+        return bs.to_ullong();
+    }
+};
