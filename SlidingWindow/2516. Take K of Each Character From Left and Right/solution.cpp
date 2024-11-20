@@ -32,3 +32,42 @@ public:
         return ans;
     }
 };
+/*
+ *  2024/11/20 daily challenge
+ *  一樣的想法因為取左右 所以中間視為slinding window
+ */
+class Solution {
+public:
+    int takeCharacters(string s, int k) {
+        int cur[3] = {0}, sz = s.size(), ans = sz;
+        int cnt[3] = {0};
+        // special case
+        if(k * 3 > s.size()) return -1;
+        for(auto& c : s) cnt[c - 'a']++;
+        for(auto& c : cnt) {
+            if(c < k) return -1;
+            c -= k;
+        }
+        if(k * 3 == sz) return sz;
+        // general case
+        for(int left = 0, right = 0; right < s.size(); ++right) {
+            cur[s[right] - 'a']++;
+            while((left <= right) && ((cur[0] > cnt[0]) || (cur[1] > cnt[1]) || (cur[2] > cnt[2]))) {
+                cur[s[left] - 'a']--;
+                left++;
+            }
+            ans = min(ans, sz - (right - left + 1));
+        }
+        return ans;
+    }
+};
+/*     |  |
+    aabaaaacaabc, k = 2
+
+    a = 8  --> 6
+    b = 2  --> 0
+    c = 2  --> 0
+
+    a = 4
+
+*/
