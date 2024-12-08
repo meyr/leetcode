@@ -24,3 +24,28 @@ public:
         return ans;
     }
 };
+/*
+ *   Greedy point :  紀錄目前看到non-overlap的最大值  
+ * 
+ *   time  : O(NlogN + NlogN) = O(NlogN)
+ *   space : O(N)
+ */
+ class Solution {
+public:
+    int maxTwoEvents(vector<vector<int>>& events) {
+        int sz = events.size();
+        if(sz == 1) return events[0][2];
+        priority_queue<vector<int>> pq; // maxheap, {結束時間, value}
+        int maxv{}, ans{}; // 目前最大val
+        sort(begin(events), end(events));
+        for(auto& e : events) {
+            while(!pq.empty() && -pq.top()[0] < e[0]) {
+                maxv = max(maxv, pq.top()[1]);
+                pq.pop();
+            }
+            ans = max(ans, e[2] + maxv);
+            pq.push({-e[1], e[2]});
+        }
+        return ans;
+    }
+};
