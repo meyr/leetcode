@@ -36,3 +36,28 @@ public:
         return ans;
     }
 };
+/*
+ *   2024/12/10 daily challenge
+ *
+ *   只需要統計前三個長度
+ *
+ *   time  : O(N*3) = O(N)
+ *   space : O(26 * N) = O(N)
+ *
+ */
+class Solution {
+public:
+    int maximumLength(string s) {
+        vector<vector<int>> mem(26, vector<int>(s.size() + 1));
+        mem[s[0] - 'a'][1] = 1;
+        int ans{-1};
+        for(int i = 1, len = 1; i < s.size(); ++i) {
+            len = s[i - 1] == s[i] ? len + 1 : 1;
+            for(int j = len; j >= max(1, len - 2); --j) {
+                if(++mem[s[i] - 'a'][j] >= 3)
+                    ans = max(ans, j);
+            }
+        }
+        return ans;
+    }
+};
