@@ -26,4 +26,25 @@ public:
     }
 };
 /*
+    因為每個nums[i]都可以 +k, -k 所以某個subarray可以變成一個值(target)
+    nums[i], nums[i + 1]... nums[j] 一定符合
+
+    nums[i] + k1 = nums[j] - k2   其中k1, k2 <= k
+    nums[j] - nums[i] = k1 + k2 <= 2 * k
+
+    time  : O(NlogN + N) = O(NlogN)
+    space : O(logN)
 */
+class Solution {
+public:
+    int maximumBeauty(vector<int>& nums, int k) {
+        sort(begin(nums), end(nums));
+        int ans{1};
+        for(int left = 0, right = 0; right < nums.size(); ++right) {
+            while(left < right && nums[right] - nums[left] > 2 * k)
+                left++;
+            ans = max(ans, right - left + 1);
+        }
+        return ans;
+    }
+};
