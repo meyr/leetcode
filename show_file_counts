@@ -1,0 +1,3 @@
+#!/bin/bash
+
+find . -type d | grep -E "\./[a-zA-Z]+/[0-9]+\." | wc -l
