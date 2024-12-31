@@ -26,3 +26,26 @@ public:
         return helper(365);
     } 
 };
+/*  2024/12/31 daily challenge
+ *
+ *  和上面的想法差不多
+ */
+class Solution {
+    int helper(int d, unordered_set<int>& sdays, vector<int>& costs) {
+        if(d > 365) return 0;
+        else if(~mem[d]) return mem[d];
+        else if(sdays.count(d)) {
+            return mem[d] = min({
+                        costs[0] + helper(d + 1, sdays, costs),
+                        costs[1] + helper(d + 7, sdays, costs),
+                        costs[2] + helper(d + 30, sdays, costs)});
+        } else return mem[d] = helper(d + 1, sdays, costs);
+    }
+    vector<int> mem;
+public:
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        unordered_set<int> sdays(begin(days), end(days));
+        mem.resize(366, -1);
+        return helper(1, sdays, costs);
+    }
+};
