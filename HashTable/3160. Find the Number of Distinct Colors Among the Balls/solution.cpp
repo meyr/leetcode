@@ -35,5 +35,26 @@ public:
         return ans;
     }
 };
-
-
+/*  2025/02/07 daily challenge
+ *  
+ *  分別使用unordered_map<int, int> c, m來記錄ball to color, 和每個color的count
+ *  time  : O(N)
+ *  space : O(M), N : size of queries, M : limit
+ */
+class Solution {
+public:
+    vector<int> queryResults(int limit, vector<vector<int>>& queries) {
+        unordered_map<int, int> c, m;
+        vector<int> rtn;
+        int count{};
+        for(const auto& q : queries) {
+            int node = q[0], color = q[1];
+            if(c.count(node))
+                if(--m[c[node]] == 0) count--;
+            c[node] = color;
+            if(m[color]++ == 0) count++;
+            rtn.push_back(count);
+        }
+        return rtn;
+    }
+};
