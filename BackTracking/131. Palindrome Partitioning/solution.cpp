@@ -33,3 +33,35 @@ public:
         return rtn;
     }
 };
+/*
+ *  2025/03/01 daily challenge
+ *  一開始真的把substring切出來 太讓廢時間了, 後來使用isPalindrome(s, idx, len)
+ *  解法一樣只是判斷isPalindrome不太一樣
+ */
+ class Solution {
+    vector<vector<string>> rtn;
+    bool isPalindrome(const string& str, int idx, int len) {
+        int i = idx, j = idx + len - 1;
+        while(i < j && str[i] == str[j])
+            i++, j--;
+        return i >= j;
+    }
+    void helper(string& s, int idx, vector<string>& ans) {
+        if(idx == s.size()) rtn.push_back(ans);
+        else {
+            for(int len = 1; len <= s.size() - idx; ++len) {
+                if(isPalindrome(s, idx, len)) {
+                    ans.push_back(s.substr(idx, len));
+                    helper(s, idx + len, ans);
+                    ans.pop_back();
+                }
+            }
+        }
+    }
+public:
+    vector<vector<string>> partition(string s) {
+        vector<string> ans{};
+        helper(s, 0, ans);
+        return rtn;
+    }
+};
