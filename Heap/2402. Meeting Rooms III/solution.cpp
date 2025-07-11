@@ -41,3 +41,47 @@ public:
         return max_element(begin(room), end(room)) - begin(room);
     }
 };
+/*  2025/07/11 daily challenge
+ *
+ *  一開始使用一個minheap發現了有錯誤 錯誤在必須把結束的meeting room都先回收可以再分配出去
+ *  所以使用兩個minheap
+ *
+ *  time  : O(MlogM + N + MlogN)
+ *  space : O(logM + N)
+ */
+class Solution {
+    template<typename T>
+    using minheap = priority_queue<T, vector<T>, greater<>>;
+public:
+    int mostBooked(int n, vector<vector<int>>& meetings) {
+        sort(begin(meetings), end(meetings)); // O(MlogM)
+        vector<int> cnt(n);
+        minheap<vector<long>> occupy; // endTime, number
+        minheap<int> ava;           // number
+        for(int i = 0; i < n; ++i)  // O(N)
+            ava.push(i);
+        for(auto& m : meetings) {   // O(MlogN)
+            while(!occupy.empty() && m[0] >= occupy.top()[0]) {
+                ava.push(occupy.top()[1]);
+                occupy.pop();
+            }
+            if(!ava.empty()) {
+                int cur = ava.top(); ava.pop();
+                cnt[cur]++;
+                occupy.push({m[1], cur});
+            } else {
+                vector<long> cur = occupy.top(); occupy.pop();
+                int d = m[1] - m[0];
+                cnt[cur[1]]++;
+                occupy.push({cur[0] + d, cur[1]});
+            }
+        }
+        int ans{}, maxcnt{};
+        for(int i = 0; i < n; ++i)  // O(N)
+            if(cnt[i] > maxcnt) {
+                maxcnt = cnt[i];
+                ans = i;
+            }
+        return ans;
+    }
+};
