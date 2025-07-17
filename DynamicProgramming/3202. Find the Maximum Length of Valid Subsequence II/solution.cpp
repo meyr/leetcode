@@ -22,3 +22,31 @@ public:
         return ans;
     }
 };
+/*
+    參考其他解答
+    因為(nums[j] + nums[i]) % k = r
+    所以使用dp[r][nums[i]%k] 來表達 mod k == r的序列長度
+    (prev+cur)%k = r
+    prev%k + cur%k = r
+    prev + cur%k = r
+    prev = (r - cur%k + k)%k
+
+    time  : O(NK)
+    space : O(K^2)
+*/
+class Solution {
+public:
+    int maximumLength(vector<int>& nums, int k) {
+        vector<vector<int>> dp(k, vector<int>(k, 0));
+        int maxLen = 0;
+        for (int num : nums) {
+            num %= k;
+            for (int r = 0; r < k; ++r) {
+                int prev = (r - num + k) % k;
+                maxLen = max(maxLen, dp[r][num] = dp[r][prev] + 1);
+            }
+        }
+
+        return maxLen;
+    }
+};
