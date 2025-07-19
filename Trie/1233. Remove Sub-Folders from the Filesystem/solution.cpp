@@ -67,3 +67,21 @@ public:
         return ans;
     }
 };
+/*  2025/07/19 daily challenge
+ *  第一次一樣寫了Trie的解法看了上面解答自己寫了下面的解答
+ */
+ class Solution {
+public:
+    vector<string> removeSubfolders(vector<string>& folder) {
+        sort(begin(folder), end(folder));
+        vector<string> rtn;
+        for(auto& f : folder) {
+            if(!rtn.empty()) {
+                int pos = f.find(rtn.back() + "/"); //__important__ 要多找"/" 不然有可能找到 rtn.back() = "/a/b/c", f = "a/b/cd"
+                if(pos == 0) continue;              //                        上面這種情況還是會找到
+            }
+            rtn.push_back(f);
+        }
+        return rtn;
+    }
+};
