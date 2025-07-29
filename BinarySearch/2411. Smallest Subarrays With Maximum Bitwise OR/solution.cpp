@@ -56,3 +56,84 @@ vector<int> smallestSubarrays(vector<int>& A) {
     }
     return res;
 }
+/*  2025/07/29 daily challenge
+ *  根據題意 一開始寫出了TLE解答
+ *
+ *  time  : O(N^2)
+ */
+class Solution {
+public:
+    vector<int> smallestSubarrays(vector<int>& nums) {
+        int sz = nums.size();
+        vector<int> maxor(sz);
+        maxor[sz - 1] = nums[sz - 1];
+        for(int i = sz - 2; i >= 0; --i)
+            maxor[i] = maxor[i + 1] | nums[i];
+        vector<int> ans;
+        for(int i = 0; i < sz; ++i) {
+            int target = maxor[i];
+            int cur{};
+            for(int j = i; j < sz; ++j) {
+                cur |= nums[j];
+                if(cur == target) {
+                    ans.push_back(j - i + 1);
+                    break;
+                }
+            }
+        }
+        return ans;
+    }
+};
+/*  根據hint其實我們只在乎 maxor的setbit最早出現的index
+ *  所以改寫成下面
+ *
+ *  time  : O(32N) = O(N)
+ *  space : O(N+32) = O(N)
+ */
+class Solution {
+public:
+    vector<int> smallestSubarrays(vector<int>& nums) {
+        int sz = nums.size();
+        int maxor{};
+        vector<int> rtn(sz), prev(32, sz);
+        for(int i = sz - 1; i >= 0; --i) {
+            maxor |= nums[i];               // 統計目前的maximum xor value
+            int ans{};
+            if(maxor == 0) ans = 1;         // 如果是0 就不需要計算
+            else{
+                for(int j = 0; j < 32; ++j) {
+                    if(nums[i] & (1 << j))      // update setbit位置
+                        prev[j] = i;
+                    if(maxor & (1 << j))
+                        ans = max(ans, prev[j] - i + 1);
+                }
+            }
+            rtn[i] = ans;
+        }
+        return rtn;
+    }
+};
+/*  參考: https://leetcode.com/problems/smallest-subarrays-with-maximum-bitwise-or/solutions/2588015/javacpython-bit-solution-with-explanatio-r6hi/
+ *
+ *  想法和上面一樣 
+ *  不需要maxor 因為last[i] 有值(>0) 就表示了maxor的setbit
+ *  另外 last[30] = {}, 且res[i] = max(res[i], last[j] - i + 1) 是取max, 所以當last[j] == 0 為負值不會取
+ *
+ *  time  : O(30N) = O(N)
+ *  space : O(N + 30) = O(N)
+ */
+class Solution {
+public:
+    vector<int> smallestSubarrays(vector<int>& A) {
+        int last[30] = {}, n = A.size();
+        vector<int> res(n, 1);
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = 0; j < 30; ++j) {
+                if (A[i] & (1 << j))
+                    last[j] = i;
+                res[i] = max(res[i], last[j] - i + 1);
+            }
+        }
+        return res;
+    }
+};
