@@ -38,3 +38,60 @@ public:
         return rtn;
     }
 };
+/*  2025/09/18 daily challenge
+ *  
+ *  因為execTop會先找priority最高的先執行 如果priority一樣就拿taskId最高的來執行
+ *  所以我使用一個map<int, set<int>> 先對priority排序 再用 set<int> 對task排序
+ *  另外我只存了taskid 所以需要unordered_map<int, int> 從taskId對應userId和priority
+ *
+ *  因為 priority, taskId 都是取最大的也可以用set<pair<int, int>> 向上面解答那樣
+ *  space : O(N + N + N) = O(N)
+ */
+class TaskManager {
+    unordered_map<int, int> t2u, t2p; // task id to user id, task id to priority
+    map<int, set<int>> lists; // priority, taskid
+public:
+    // O(NlogN)
+    TaskManager(vector<vector<int>>& tasks) {
+        for(const auto& task : tasks) {
+            int u = task[0], t = task[1], p = task[2];
+            add(u, t, p);
+        }
+    }
+
+    // O(logN)
+    void add(int userId, int taskId, int priority) {
+        t2u[taskId] = userId;
+        t2p[taskId] = priority;
+        lists[priority].insert(taskId);
+    }
+
+    // O(logN + logN) = O(logN)
+    void edit(int taskId, int newPriority) {
+        int u = t2u[taskId];
+        rmv(taskId);
+        add(u, taskId, newPriority);
+    }
+
+    // O(logN + logN) = O(logN)
+    void rmv(int taskId) {
+        int p = t2p[taskId];
+        lists[p].erase(taskId);
+        if(lists[p].empty())
+            lists.erase(p);
+        t2p.erase(taskId);
+        t2u.erase(taskId);
+    }
+
+    // O(logN)
+    int execTop() {
+        int rtn{-1};
+        if(!lists.empty()) {
+            auto& sp = lists.rbegin()->second;
+            int t = *sp.rbegin();
+            rtn = t2u[t];
+            rmv(t);
+        }
+        return rtn;
+    }
+};
