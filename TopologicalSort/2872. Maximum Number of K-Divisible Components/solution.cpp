@@ -41,3 +41,8 @@ public:
         return ans;
     }
 };
+/*  2025/11/28 daily challenge 還是沒做出來
+ *  題目有提示 "Sum of values is divisible by k" 這是寫在Constraints有點奸詐 因為有時候沒往下拉看
+ *  既然 sum(values) 為 k 的部數 所以我切下來的subtree為k的倍數 剩下的subtree也為k的倍數
+ *  而且題目要求最多數目的subtree 所以遇到k的倍數就切下來 不行就把累積的數值繼續往其他地方推
+ */
