@@ -30,3 +30,72 @@ public:
         return ans;
     }
 };
+/*  2025/12/23 再寫一次還是MLE
+ *  主要是傳遞unordered_set<int>來統計訪問過的node太浪費記憶體
+ *  如果要修改成使用vector<int> visited就必須使用dfs不能使用bfs
+ *  類似recursive一樣訪問過就+1, 回去就-1 這樣才可以節省memory
+ */
+class Solution {
+    using state = pair<vector<int>, unordered_set<int>>;
+    unordered_map<int, vector<vector<int>>> adj;
+public:
+    int maximalPathQuality(vector<int>& values, vector<vector<int>>& edges, int maxTime) {
+        for(auto& e : edges) {
+            adj[e[0]].push_back({e[1], e[2]});
+            adj[e[1]].push_back({e[0], e[2]});
+        }
+        queue<state> q;
+        int ans{};
+        q.push({
+            {0, maxTime, 0},    // cur node, remain time, quality
+            {}                  // visited node
+        });
+        while(!q.empty()) {
+            auto [st, vis] = q.front(); q.pop();
+            int cur = st[0], time = st[1], qty = st[2];
+            //if(time < 0) continue;
+            if(!vis.count(cur))
+                qty += values[cur];
+            vis.insert(cur);
+            if(cur == 0) ans = max(ans, qty);
+            for(auto& nxt : adj[cur]) {
+                if(nxt[1] <= time) {
+                    q.push({
+                        {nxt[0], time - nxt[1], qty},
+                        vis
+                    });
+                }
+            }
+        }
+        return ans;
+    }
+};
+/*  根據上面的解答改成DFS
+ *
+ */
+class Solution {
+    int ans{};
+    unordered_map<int, vector<vector<int>>> adj;
+    void helper(int cur, vector<int>& visited, vector<int>& values, int time, int qty) {
+        qty += visited[cur] == 0 ? values[cur] : 0;
+        visited[cur]++;
+        if(cur == 0)
+            ans = max(ans, qty);
+        for(auto& nxt : adj[cur]) {
+            if(nxt[1] <= time)
+                helper(nxt[0], visited, values, time - nxt[1], qty);
+        }
+        visited[cur]--;
+    }
+public:
+    int maximalPathQuality(vector<int>& values, vector<vector<int>>& edges, int maxTime) {
+        int sz = values.size();
+        for(auto& e : edges) {
+            adj[e[0]].push_back({e[1], e[2]});
+            adj[e[1]].push_back({e[0], e[2]});
+        }
+        vector<int> visited(sz);
+        helper(0, visited, values, maxTime, 0);
+        return ans;
+    }
+};
