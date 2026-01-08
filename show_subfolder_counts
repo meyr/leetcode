@@ -1,0 +1,5 @@
+#!/bin/bash
+for d in */; do
+    count=$(find "$d" -maxdepth 1 -type d | wc -l)
+    echo "$((count-1)) $d"
+done | sort -rn
