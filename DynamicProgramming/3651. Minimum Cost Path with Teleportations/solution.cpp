@@ -4,6 +4,7 @@
  *  因為多了teleportation且次數不能多於k
  *  dp[k][y][x](位置y, x使用了k次teleportaton) 就會被 dp[k - 1][y'][x'] 其中grid[y'][x'] >= grid[y][x] 中的最小值所決定
  *  所以使用map<int, vector<pair<int, int>>> 紀錄 grid[y][x], <y, x>
+ *
  */
 class Solution {
 public:
