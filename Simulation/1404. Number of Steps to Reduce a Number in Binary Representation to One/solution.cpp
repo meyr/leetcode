@@ -27,3 +27,27 @@ public:
         return step;
     }
 };
+/*  2026/02/26  daily challenge 自己寫的版本
+ *
+ */
+class Solution {
+public:
+    int numSteps(string s) {
+        int ans{}, car{};
+        while(s.size() > 1) {
+            int n = s.back() - '0';
+            n += car;
+            car = n / 2;
+            n   = n % 2;
+            if(n == 1) {            // 奇數的形況必須多操作一次
+                car += 1;
+                ans++;
+            }
+            ans++;
+            s.pop_back();
+        }
+        int n = s.back() - '0' + car;   // 計算最後的結果
+        if(n == 1) return ans;
+        else return ans + 1;
+    }
+};
