@@ -25,3 +25,26 @@ public:
     0, 1, 1, 1, 0, 0, 1
 
 */
+/* 2026/03/03 daily challenge
+ *
+ *  因為 n <= 20 所以先計算每個n代表的長度 Nk = Nk-1 * 2 + 1 目前的n是前一個的兩倍+1 --> 其實每一層的長度是pow(2, n) - 1, 中間點就是剛好2的倍數
+ *  找出中心點 並且比較中心點和k
+ *
+ */
+class Solution {
+    vector<int> length;
+    int helper(int n, int k) {
+        int mid = (length[n] + 1) / 2;
+        if(n == 1) return 0;
+        else if(k == mid) return 1;
+        else if(k > mid) return !helper(n - 1, length[n] - k + 1);
+        else return helper(n - 1, k);
+    }
+public:
+    char findKthBit(int n, int k) {
+        length.resize(21);
+        length[1] = 1;
+        for(int i = 2; i < length.size(); ++i) length[i] = length[i - 1] * 2 + 1;
+        return helper(n, k) + '0';
+    }
+};
