@@ -29,13 +29,13 @@ public:
 };
 /*
  *  參考解答 : https://leetcode.com/problems/find-all-possible-stable-binary-arrays-i/solutions/5080679/c-3d-dp-memoisation-109ms-7-99mb/
- *  
+ *
  *  因為subarray.size() > limit 裡面一定要有0和1也就是
  *  subarray.size() <= limit 可以有連續的0或是1
  *
  *  假設limit = 3 則 [0][00][000][1][11][111] 均為合理, 根據前面是0/1 加上相反的subarray就可以保證subarray.size() <= limit不會有連續的0/1
  *
- *  [0]    -> [0][1], [0][11], [0][111]   
+ *  [0]    -> [0][1], [0][11], [0][111]
  *  [00]   -> [00][1], [00][11], [00][111]
  *  [000]  -> [000][1], [000][11], [000][111]
  *  [1]    -> [1][0], [1][00], [1][000]
@@ -49,14 +49,14 @@ class Solution {
     int memo[2][201][201], lmt;
     int mod = 1e9 + 7;
     long long dfs(int prev, int zeroes, int ones) {
-        if (memo[prev][zeroes][ones] != -1) 
+        if (memo[prev][zeroes][ones] != -1)
             return memo[prev][zeroes][ones];
         long long subRes = 0;
         if (prev) { // 前一個是1 所以加上所有0的subarray
-            for (int i = 1; i <= min(lmt, zeroes); i++) 
+            for (int i = 1; i <= min(lmt, zeroes); i++)
                 subRes += dfs(0, zeroes - i, ones);
         } else {  // 前一個是0 所以加上所以1的subarray
-            for (int i = 1; i <= min(lmt, ones); i++) 
+            for (int i = 1; i <= min(lmt, ones); i++)
                 subRes += dfs(1, zeroes, ones - i);
         }
         return memo[prev][zeroes][ones] = subRes % mod;
@@ -67,10 +67,40 @@ public:
         memset(memo, -1, sizeof(memo));
         memo[0][0][0] = memo[1][0][0] = 1;
         lmt = limit;
-        for (int i = 1; i <= min(lmt, zeroes); i++) 
+        for (int i = 1; i <= min(lmt, zeroes); i++)
             res += dfs(0, zeroes - i, ones);
-        for (int i = 1; i <= min(lmt, ones); i++) 
+        for (int i = 1; i <= min(lmt, ones); i++)
             res += dfs(1, zeroes, ones - i);
         return res % mod;
+    }
+};
+/* 2026/03/09 daily challenge
+ * 第一次也是寫出O(2NML) 和第一個解答一樣
+ * 後來意識到只要使用for loop就可以 和第二個解答一樣
+ *
+ * time  : O(2NM) = O(NM)
+ * space : O(2NM) = O(NM)
+ */
+class Solution {
+    using ll = long long;
+    int limit, mod = 1e9 + 7;
+    int helper(int zero, int one, int prev) {
+        if(~mem[zero][one][prev]) return mem[zero][one][prev];
+        int rtn{};
+        if(prev == 0)
+            for(int i = 1; i <= min(limit, one); ++i)
+                rtn = ((ll)rtn + helper(zero, one - i, 1)) % mod;
+        else
+            for(int i = 1; i <= min(limit, zero); ++i)
+                rtn = ((ll)rtn + helper(zero - i, one, 0)) % mod;
+        return mem[zero][one][prev] = rtn;
+    }
+    vector<vector<vector<int>>> mem;
+public:
+    int numberOfStableArrays(int zero, int one, int limit) {
+        this->limit = limit;
+        mem.resize(zero + 1, vector<vector<int>>(one + 1, vector<int>(2, -1)));
+        mem[0][0][0] = mem[0][0][1] = 1;
+        return (helper(zero, one, 0) + helper(zero, one, 1)) % mod; // 因為開頭可能是0或是1
     }
 };
