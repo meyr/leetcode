@@ -41,3 +41,48 @@ public:
         return ans;
     }
 };
+/*  2026/04/01 daily challenge
+ *
+ *  因為方向只有兩種 所以有四種情況
+ *  LL      --> 推入stack
+ *  LR      --> 推入stack
+ *  RL                      --> 比較healths 丟掉一個或兩個
+ *  RR      --> 推入stack
+ */
+class Solution {
+public:
+    vector<int> survivedRobotsHealths(vector<int>& positions, vector<int>& healths, string directions) {
+        int sz = positions.size();
+        vector<int> idx(sz);
+        iota(begin(idx), end(idx), 0);
+        sort(begin(idx), end(idx), [&](auto& a, auto& b){
+            return positions[a] < positions[b];
+        });
+        vector<int> st;
+        for(const auto& cur : idx) {
+            bool add_to_back{true};
+            while(!st.empty() && directions[st.back()] == 'R' && directions[cur] == 'L') { // 只需要比較這種情況
+                if(healths[st.back()] > healths[cur]) {
+                    healths[st.back()]--;
+                    add_to_back = false;
+                    break;
+                } else if(healths[st.back()] == healths[cur]) {
+                    st.pop_back();
+                    add_to_back = false;
+                    break;
+                } else {
+                    healths[cur]--;
+                    st.pop_back();
+                    add_to_back = true;
+                }
+            }
+            if(add_to_back)
+                st.push_back(cur);
+        }
+        sort(begin(st), end(st));
+        vector<int> rtn;
+        for(auto& i : st)
+            rtn.push_back(healths[i]);
+        return rtn;
+    }
+};
