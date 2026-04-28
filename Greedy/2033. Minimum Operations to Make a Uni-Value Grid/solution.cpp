@@ -8,7 +8,7 @@
  *if k == 6  k-2 + k-4 + 6-k + 8-k = (sum(vecs) - 2*prev_k - 0*k) /x
  *if k == 8  k-2 + k-4 + k-6 + 8-k = (sum(vecs) - 2*prev_k + 2*k) /x
  *
- * time  : O(MN + MNlogMN + MN + MN) = O(MNlogMN) 
+ * time  : O(MN + MNlogMN + MN + MN) = O(MNlogMN)
  * space : O(MN)
  */
 
@@ -57,6 +57,34 @@ public:
                 return -1;
             else
                 ans+=abs(nums[i]-target)/x;
+        }
+        return ans;
+    }
+};
+/*
+ *  2026/04/28 daily challenge
+ *  參考解答和上面的想法一樣 但是我們排序只是為了找中位數 所以改使用nth_element來降低time complexity
+ *
+ *  nth_element(start it, mid it, end it) : 只會保證數列在[start it, end it]中, 在mid it之前的都是小於它,
+ *                                                                              在mid it之後都是大於等於它
+ *  所以可以用來找中位數
+ *
+ *  time  : O(MN + MN + MN) = O(MN)
+ *  space : O(MN)
+ */
+class Solution {
+public:
+    int minOperations(vector<vector<int>>& grid, int x) {
+        vector<int> nums;
+        for(int i = 0; i < grid.size(); ++i) for(int j = 0; j < grid[0].size(); ++j)
+            nums.push_back(grid[i][j]);
+        int sz = nums.size();
+        nth_element(begin(nums), begin(nums) + sz / 2,  end(nums)); // __important__ 使用nth_element取代sort
+        int target = nums[sz / 2];
+        int ans{};
+        for(auto& n : nums) {
+            if(abs(n - target) % x != 0) return -1;
+            else ans += abs(n - target) / x;
         }
         return ans;
     }
