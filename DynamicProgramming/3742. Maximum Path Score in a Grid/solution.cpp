@@ -14,7 +14,7 @@ class Solution {
         mem[y][x][cost] = score;
         helper(grid, y + 1, x, score, cost);
         helper(grid, y, x + 1, score, cost);
-    }        
+    }
 public:
     int maxPathScore(vector<vector<int>>& grid, int k) {
         m = grid.size();
@@ -52,7 +52,7 @@ public:
                             }
                         }
                     }
-                    
+
                     if (x > 0) {
                         if (dp[y][x - 1][prev_c] != INF) {
                             int new_cost = prev_c + (grid[y][x] > 0);
@@ -71,5 +71,34 @@ public:
             ans = max(ans, n);
 
         return (ans == INF) ? -1 : ans;
+    }
+};
+/*  2026/04/30 daily challenge
+ *
+ *  time  : O(MNK) <-- time complexity和第一個解答一樣 但是過了
+ *  space : O(MNK)
+ *
+ */
+class Solution {
+    int m, n;
+    int helper(const vector<vector<int>>& grid, int y, int x, int k) {
+        if(y < 0 || x < 0 || k < 0) return -1e4;
+        else if(y == 0 && x == 0) {
+            if(k > 0) return grid[y][x];
+            else if(k == 0 && grid[y][x] == 0) return 0;
+            else return -1e4;
+        } else if(~mem[y][x][k]) return mem[y][x][k];
+        int nk = k - (grid[y][x] > 0);
+        return mem[y][x][k] = max(helper(grid, y - 1, x, nk),
+                                  helper(grid, y, x - 1, nk)) + grid[y][x];
+    }
+    vector<vector<vector<int>>> mem;
+public:
+    int maxPathScore(vector<vector<int>>& grid, int k) {
+        m = grid.size(), n = grid[0].size();
+        mem.resize(m, vector<vector<int>>(n, vector<int>(k + 1, -1)));
+        int rtn = helper(grid, m - 1, n - 1, k);
+        if(rtn < 0) return -1;
+        else return rtn;
     }
 };
