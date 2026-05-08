@@ -1,5 +1,5 @@
 /*  參考解答: https://leetcode.com/problems/minimum-jumps-to-reach-end-via-prime-teleportation/solutions/7009825/easy-c-solution-using-dijkstra-with-intu-esuo/
- *  
+ *
  *  重點是找出 每個prime可以跳過去的nums[i]
  *  然後使用shortest path algorithm來找出到達終點的最短dist
  *
@@ -14,7 +14,7 @@ public:
     //                  res = [13]
     //
     //  回傳的res裡面的member都是prime
-    vector<int> factor(int x) { 
+    vector<int> factor(int x) {
         vector<int> res;
         for(int d = 2; d * d <= x; d++){ // d = 2, 3, 4, 5, 6, ...sqrt(x)
             if(x % d == 0) {             // x不是prime, 表示有因數
@@ -54,3 +54,12 @@ public:
         return dist.back();
     }
 };
+/*  2026/05/08 daily challenge TLE
+ *
+ *  重點在建立挑轉的關係
+ *  1. prime可以跳到 nums[j] % p == 0 的位置, 也就是質數的倍數位置, 既然是質數的倍數所以一定不是質數
+ *  2. 數字都可以分解成質數相乘 所以只要確認可以從那個質數跳過來即可
+ *  3. vector<int> factor(int x) 對x進行因數分解 如果本身是因數   res = {x}
+ *                                                       不是因數 res = {p1, p2, p3...} 裡面不會有1是因為 1不是prime
+ */
+
