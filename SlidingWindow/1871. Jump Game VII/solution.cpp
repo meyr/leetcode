@@ -27,7 +27,9 @@ public:
         return false;
     }
 };
-/*  每一個node(i) 都是從前面跳過來的 [i - maxJump, i - minJump] 如果這個區間有s[j] == '0' 且 s[j]是可以抵達的 那就可以抵達s[i]
+/*  參考解答
+ *
+ *  每一個node(i) 都是從前面跳過來的 [i - maxJump, i - minJump] 如果這個區間有s[j] == '0' 且 s[j]是可以抵達的 那就可以抵達s[i]
  *
  *  ---- i - 1 - maxJump ------------ i - 1 - minJump ------------ i - 1 ------------------
  *                 /|\ (少了這個點)                    |
