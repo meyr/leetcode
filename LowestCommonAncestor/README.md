@@ -1,4 +1,20 @@
 ## Lowest Common Ancestor(LCA)
++ LCA的定義是 兩個node往上找到最近相同的祖先
++ 餐考 [236. Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/description/)
++ 只要左樹和右樹都又看到p或是q那目前的root就是LCA
+```cpp
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if(!root) return nullptr;
+    else if(root == p || root == q) return root;    // 看到了p或是q所以回傳root
+    else {
+        TreeNode *l = lowestCommonAncestor(root->left, p, q);
+        TreeNode *r = lowestCommonAncestor(root->right, p, q);
+
+        if(l && r) return root; // 兩邊都有看到
+        else return l ? l : r;  // 只有一邊看到就回傳那一邊
+    }
+}
+```
 
 ### 建立parent table
 + 參考 [1483. Kth Ancestor of a Tree Node](https://leetcode.com/problems/kth-ancestor-of-a-tree-node/description/)
