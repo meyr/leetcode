@@ -33,3 +33,43 @@ public:
 
     }
 };
+/*  閱讀完 3559. Number of Ways to Assign Edge Weights II 後重新寫一次
+ *  建立parent table parent[cur][j] 其中j為向上2^j個node
+ *
+ */
+class TreeAncestor {
+    vector<vector<int>> parent;
+    vector<vector<int>> adj;
+    int log_max;
+    void dfs(int cur, int par) {
+        parent[cur][0] = par;
+        for(int j = 1; j < log_max; ++j)
+            if(parent[cur][j - 1] != -1)
+                parent[cur][j] = parent[parent[cur][j - 1]][j - 1];
+        for(auto& nxt : adj[cur])
+            if(nxt != par)
+                dfs(nxt, cur);
+    }
+public:
+    TreeAncestor(int n, vector<int>& p) {
+        log_max = log2(n) + 1;
+        parent.resize(n, vector<int>(log_max, -1));
+        adj.resize(n);
+        int r;
+        for(int i = 0; i < n; ++i) {
+            if(p[i] == -1) r = i;
+            else adj[p[i]].push_back(i);
+        }
+        dfs(r, -1);
+
+    }
+
+    int getKthAncestor(int node, int k) {
+        for(int j = log_max - 1; j >= 0; --j) {
+            if((k >> j) & 1)
+                node = parent[node][j];
+            if(node == -1) return node;
+        }
+        return node;
+    }
+};
