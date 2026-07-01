@@ -1,4 +1,4 @@
-/*   
+/*
  *   從thief往外擴張 把每一個element離thief多遠都標示出來
  *
  *   例如:
@@ -16,18 +16,18 @@
  *
  *   使用Union Find從最大值開始連線 >= 自己數值的點
  *
- *   step1 : 
+ *   step1 :
  *              3, 2, 1
  *              4, 3, 2
  *            [5], 4, 3
  *
- *   step2 : 
+ *   step2 :
  *               3, 2, 1
  *              [4],3, 2
  *               |
  *               5-[4],3
  *
- *   step3 :              
+ *   step3 :
  *              [3],2, 1    在value = 3的時候(0, 0), (m - 1, n - 1)可以連接起來
  *               |          所以return 3 - 1
  *               4-[3],2
@@ -68,7 +68,7 @@ public:
                 if(grid[y][x] == 1) q.push({y, x});
             }
         }
-        // add value 
+        // add value
         map<int, vector<vector<int>>> m; // value, {y, x}
         while(!q.empty()) { // O(N)
             for(int loop = q.size(); loop > 0; --loop) {
@@ -100,6 +100,77 @@ public:
                 }
             }
         }
-        return 0;    
+        return 0;
+    }
+};
+/*  2026/07/01 daily challenge
+ *  想法類似 改使用bfs和dfs來找答案
+ *
+ */
+class Solution {
+    using vvi = vector<vector<int>>;
+    int sz, maxw{};
+    const vvi dirs{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    map<int, vvi> mp;
+    inline bool inRange(int y, int x) {
+        if(y < 0 || x < 0 || y == sz || x == sz) return false;
+        else return true;
+    }
+    void bfs(vvi& grid) {
+        queue<vector<int>> q;
+        for(int y = 0; y < sz; ++y) for(int x = 0; x < sz; ++x) {
+            if(grid[y][x] == 1) {
+                q.push({y, x, 0});
+                grid[y][x] = -1;
+            } else grid[y][x] = 1e3;
+        }
+        while(!q.empty()) {
+            auto cur = q.front(); q.pop();
+            int y = cur[0], x = cur[1], w = cur[2];
+            mp[w].push_back({y, x});
+            if((y == 0 && x == 0) || (y == sz - 1 && x == sz - 1)) maxw = max(maxw, w);
+            for(const auto& d : dirs) {
+                int ny = y + d[0], nx = x + d[1];
+                if(!inRange(ny, nx) || grid[ny][nx] <= w + 1) continue;
+                grid[ny][nx] = w + 1;
+                q.push({ny, nx, grid[ny][nx]});
+            }
+        }
+    }
+    void fill(vvi& grid, const vvi& vecs) {
+        for(const auto& v : vecs) {
+            int y = v[0], x = v[1];
+            grid[y][x] = 0;
+        }
+    }
+    bool dfs(const vvi& grid, int y, int x, unordered_set<int>& seen) {
+        if(grid[y][x] != 0) return false;
+        else if(y == sz - 1 && x == sz - 1) return true;
+        else {
+            bool rtn{false};
+            for(const auto& d : dirs) {
+                int ny = y + d[0], nx = x + d[1];
+                if(!inRange(ny, nx) || seen.count(ny * sz + nx)) continue;
+                seen.insert(ny * sz + nx);
+                rtn |= dfs(grid, ny, nx, seen);
+            }
+            return rtn;
+        }
+    }
+public:
+    int maximumSafenessFactor(vector<vector<int>>& grid) {
+        sz = grid.size();
+        // special case
+        if(grid.front().front() || grid.back().back()) return 0;
+        bfs(grid);
+        for(auto it = mp.rbegin(); it != mp.rend(); ++it) {
+            fill(grid, it->second);
+            if(it->first > maxw) continue;
+            unordered_set<int> seen;
+            seen.insert({0, 0});
+            if(dfs(grid, 0, 0, seen))
+                return it->first;
+        }
+        return 0;
     }
 };
