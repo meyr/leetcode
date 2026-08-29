@@ -31,3 +31,40 @@ public:
         return res;
     }
 };
+/*
+ *      任兩個i, j如果abs(nums[i] - nums[j]) <= limit就可以交換
+ *      __important__ 例如1, 3, 5, limit = 2, 1和3可以交換, 3和5可以交換，但是1和5不能交換
+ *                    可是我們使用以下方法 [1, 3], 5 --> [3], 1, [5] --> 5, [1, 3] --> 5, 3, 1
+ *                    最後結果也是達到1和我5交換，也就是一串排列過的數字只要相差limit之內都可以交換
+ *                    所以我們先把數字分類 相同的group就可以交換 最後只要把group內的數字排序即可
+ *
+ */
+class Solution {
+public:
+    vector<int> lexicographicallySmallestArray(vector<int>& nums, int limit) {
+        int sz = nums.size();
+        vector<int> idxs(sz);
+        iota(begin(idxs), end(idxs), 0);
+        sort(begin(idxs), end(idxs), [&](int a, int b){
+            return nums[a] < nums[b];
+        });
+        int g{};
+        unordered_map<int, vector<int>> groups;
+        groups[g].push_back(idxs[0]);
+        for(int i = 1; i < sz; ++i) {   // 統計所有的groups
+            if(nums[idxs[i]] - nums[groups[g].back()] <= limit)
+                groups[g].push_back(idxs[i]);
+            else groups[++g].push_back(idxs[i]);
+        }
+        for(auto& ref : groups) {       // 針對每個group排序
+            if(ref.second.size() == 1) continue;
+            auto pos = ref.second;      // ref.second 從小到大的排序
+            sort(begin(pos), end(pos)); // 排列過的pos 在groups中出現的順序
+            vector<int> vals;
+            for(auto& p : ref.second) vals.push_back(nums[p]);  // 把從小到大的數值備份出來
+            for(int i = 0; i < vals.size(); ++i)                // 針對這個group的index把數值從小到大填入
+                nums[pos[i]] = vals[i];
+        }
+        return nums;
+    }
+};
