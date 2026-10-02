@@ -94,3 +94,37 @@ public:
         return rtn;
     }
 };
+/*
+ *      2026/10/2 daily challenge
+ *
+ *      因為只有兩種可能 所以兩種可能都去試 再去判斷是否為正確就可以
+ *      少了很多檢查條件
+ *
+ *      time  : O(2^N) 因為兩種都會嘗試
+ *      space : O(2^N)
+ */
+class Solution {
+    int n;
+    void helper(int rem, int val, string& ans, vector<string>& rtn) {
+        if(rem < 0 || val < 0) return;
+        if(ans.size() == n * 2) {
+            rtn.push_back(ans);
+            return;
+        } else {
+            ans.push_back('(');
+            helper(rem - 1, val + 1, ans, rtn);
+            ans.pop_back();
+            ans.push_back(')');
+            helper(rem, val - 1, ans, rtn);
+            ans.pop_back();
+        }
+    }
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> rtn;
+        string ans;
+        this->n = n;
+        helper(n, 0, ans, rtn);
+        return rtn;
+    }
+};
